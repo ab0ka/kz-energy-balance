@@ -1,0 +1,50 @@
+% =====================================================================
+% CHAPTER 2 — LITERATURE REVIEW
+% =====================================================================
+
+\chapter{LITERATURE REVIEW}
+\label{ch:litreview}
+
+\section{Energy System Modeling and Analysis Frameworks}
+\label{sec:lit_modeling}
+
+Quantitative analysis of national energy systems has evolved through three generations of modeling approaches. The first generation, exemplified by accounting-style energy balances published by national statistical offices, provides retrospective insights but lacks predictive capacity. The second generation comprises bottom-up optimization frameworks such as TIMES, MARKAL, OSeMOSYS, and MESSAGE, which solve cost-minimization problems over multi-decadal horizons~\cite{ringkjob2018, prina2020}. The third generation introduces high-resolution open-source frameworks; \texttt{PyPSA}~\cite{brown2018pypsa} and its global extension \texttt{PyPSA-Earth}~\cite{parzen2023} solve hourly linear-optimal-power-flow problems on country-level networks with full transparency and reproducibility.
+
+For Kazakhstan specifically, only fragmentary applications of bottom-up models have been published. \cite{karatayev2017} reviewed the policy environment for renewable uptake, and \cite{boute2019} analysed energy storage policy implications. A comprehensive multi-source statistical baseline integrating national operator data (KEGOC, KOREM) with international reanalyses remains absent in the literature, which constitutes the first contribution gap addressed in this dissertation.
+
+\section{Index Decomposition Analysis in Energy Studies}
+\label{sec:lit_lmdi}
+
+Index Decomposition Analysis (IDA) attributes changes in an aggregate energy or emission indicator to a set of pre-defined effects. The Logarithmic Mean Divisia Index (LMDI), introduced by Ang and refined in subsequent work~\cite{ang2005, ang2015}, has become the dominant IDA variant due to its perfect decomposition property (no residual term) and consistency in aggregation. \cite{wang2017} compares IDA against Structural Decomposition Analysis (SDA) and concludes that IDA's data requirements are dramatically lower, making it the preferred tool for emerging economies with incomplete I-O tables. Recent applications include provincial CO\textsubscript{2} decompositions in China~\cite{liu2020} and sectoral decompositions in transition economies, but no published LMDI study addresses Kazakhstan's power sector over the post-2020 period.
+
+\section{Renewable Energy Forecasting}
+\label{sec:lit_forecasting}
+
+The forecasting of variable renewable generation has progressed from classical statistical models (ARIMA, exponential smoothing) toward deep learning architectures over the last decade. \cite{hewamalage2021} provides a comprehensive review of recurrent neural networks for time series forecasting, finding that LSTM~\cite{hochreiter1997} variants consistently outperform classical baselines on long-horizon forecasts. The M4 and M5 forecasting competitions~\cite{makridakis2018} demonstrated that hybrid statistical-ML approaches generally outperform pure deep learning when training data are limited. Probabilistic methods such as DeepAR~\cite{salinas2020} and Temporal Fusion Transformers~\cite{lim2021} extend the toolkit further but require substantial training samples. Gradient-boosted decision trees remain a strong, data-efficient alternative on tabular load and weather features~\cite{wang2019cnnlstm}, and transfer learning has emerged as a practical response to data scarcity in power-system forecasting~\cite{pan2010transfer, cai2020transfer} --- the approach pursued for the Kazakhstan demand series in Chapter~\ref{ch:ml_forecasting}.
+
+\section{ERA5-Land for Renewable Resource Assessment}
+\label{sec:lit_era5}
+
+ERA5-Land~\cite{munoz2021} and its parent product ERA5~\cite{hersbach2020} provide continuous, globally consistent reanalysis fields at $0.1^{\circ}$ and $0.25^{\circ}$ resolution respectively. Methodological work by \cite{staffell2016} and \cite{pfenninger2016} demonstrates that bias-corrected ERA5 reproduces operational wind-power and solar-PV output with monthly correlations exceeding 0.95 in well-instrumented European regions. For Kazakhstan, ERA5-Land has been used in scattered regional studies~\cite{koshim2018} but no nationwide multi-year capacity-factor map has been published in the peer-reviewed literature.
+
+\section{AI Data Center Infrastructure}
+\label{sec:lit_aidc}
+
+The rapid scaling of AI workloads has reframed the data center industry as a major and accelerating electricity-demand sector. \cite{masanet2020} recalibrated global estimates and showed that efficiency gains during 2010--2018 partially offset workload growth; however, post-2022 generative-AI deployment has reignited concern. The IEA~\cite{iea2024dc} projects global data-center electricity demand to potentially double by 2026, while the U.S.\ baseline study~\cite{shehabi2024} estimates that data centers may consume 6.7--12\% of total U.S.\ electricity by 2028. Site selection methodologies routinely combine Total Cost of Ownership (TCO), Power Usage Effectiveness (PUE), and multi-criteria decision making (TOPSIS~\cite{hwang1981, behzadian2012}). \cite{mardani2017} surveys MCDA applications in energy and concludes that TOPSIS is the most widely used technique for infrastructure ranking. The Kazakhstan-specific evaluation presented in Chapter~\ref{ch:aidc} fills a regional gap noted in the recent IRENA capacity statistics~\cite{irena2024}.
+
+\section{Kazakhstan Energy System: Previous Research}
+\label{sec:lit_kz}
+
+Peer-reviewed research on Kazakhstan's energy system is limited and concentrated in three streams: (i) policy and institutional analyses~\cite{karatayev2017, boute2019}, (ii) bioenergy and renewable resource assessment~\cite{koshim2018}, and (iii) sectoral case studies. The 2023 Strategy for Carbon Neutrality~\cite{moe2023strategy} established the policy framework but did not include operational forecasting tools. Open international datasets such as Ember~\cite{ember2024}, OWID~\cite{owid2024}, IRENA~\cite{irena2024}, and IEA~\cite{iea2024electricity} have only recently included Kazakhstan with complete coverage; this dissertation is the first to systematically integrate them.
+
+\section{Research Gap}
+\label{sec:lit_gap}
+
+The literature review reveals four unaddressed gaps for Kazakhstan:
+\begin{enumerate}
+    \item No comprehensive multi-source statistical study of the fuel and energy balance integrating OWID, Ember, KEGOC, KOREM, stat.gov.kz, and IRENA over the 2019--2025 period;
+    \item No formal statistical analysis of structural breaks in the national electricity balance, despite the 2023 inflection;
+    \item No deep-learning forecasting model for renewable capacity factors that explicitly addresses the data-scarcity problem via transfer learning from European data;
+    \item No multi-criteria evaluation of AI data-center infrastructure decisions integrating climate, water availability, and grid-constraint factors specific to Kazakhstan.
+\end{enumerate}
+This dissertation addresses these gaps through three interconnected studies presented in Chapters~\ref{ch:aidc}--\ref{ch:ml_forecasting}.

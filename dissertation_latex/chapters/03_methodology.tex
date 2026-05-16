@@ -1,0 +1,120 @@
+% =====================================================================
+% CHAPTER 3 — METHODOLOGY
+% =====================================================================
+
+\chapter{RESEARCH METHODOLOGY}
+\label{ch:methodology}
+
+\section{Data Sources}
+\label{sec:data_sources}
+
+This work uses 8 public open data sources covering complementary aspects of Kazakhstan's energy system (Table~\ref{tab:data_sources}). The combined coverage spans macro-economic energy aggregates from 1985 to the present (OWID~\cite{owid2024}), high-resolution generation-by-fuel time series from 2019 (Ember~\cite{ember2024}), regulator-published transmission and balance data (KEGOC~\cite{kegoc2024}), hourly market prices (KOREM~\cite{korem2024}), the national statistical fuel and energy balance (stat.gov.kz~\cite{statgov2024}), installed renewable capacity (IRENA~\cite{irena2024}), gridded meteorological reanalysis (ERA5-Land~\cite{munoz2021}), and grid topology (PyPSA-Earth~\cite{parzen2023}).
+
+\begin{table}[h!]
+\centering
+\caption{Data sources used in the dissertation}
+\label{tab:data_sources}
+\begin{tabular}{@{}llll@{}}
+\toprule
+\# & Source & Period & Data Type \\
+\midrule
+1 & OWID~\cite{owid2024} & 1985--2024 & Primary energy, emissions \\
+2 & Ember~\cite{ember2024} & 2019--2024 & Generation by fuel \\
+3 & stat.gov.kz~\cite{statgov2024} & 2021--2024 & Fuel and energy balance \\
+4 & KEGOC~\cite{kegoc2024} & 2020--2024 & Transmission, losses \\
+5 & KOREM~\cite{korem2024} & 2022--2024 & Hourly price data \\
+6 & IRENA~\cite{irena2024} & 2019--2024 & Installed RES capacity \\
+7 & ERA5-Land~\cite{munoz2021} & 2011--2024 & Meteorological reanalysis \\
+8 & PyPSA-Earth~\cite{parzen2023} & 2018 & Grid topology, plant attributes \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+All data are integrated into a relational SQLite database \texttt{kz\_energy\_\allowbreak balance.db} (18 tables, 34{,}362 rows). The ETL pipeline implements deterministic transformations from raw downloads (Excel sheets, CSVs, PDF extractions) to normalized long-format tables, ensuring full reproducibility. Unit conversions follow IEA conventions: 1 toe~$=$~41.868 GJ, 1~TWh~$=$~3.6~PJ.
+
+\section{LMDI Decomposition of CO\textsubscript{2} Emissions}
+\label{sec:method_lmdi}
+
+The Logarithmic Mean Divisia Index (LMDI) attributes the change in aggregate power-sector CO\textsubscript{2} emissions $C$ between a base year $0$ and target year $T$ into three multiplicative effects~\cite{ang2005, ang2015}:
+\begin{equation}
+    C = \sum_{i} C_i = \sum_{i} \underbrace{G}_{\text{Activity}} \cdot \underbrace{\frac{G_i}{G}}_{\text{Structure } S_i} \cdot \underbrace{\frac{C_i}{G_i}}_{\text{Intensity } I_i}
+\end{equation}
+where $G$ is total electricity generation (TWh), $G_i$ is generation by fuel $i$, and $C_i$ is CO\textsubscript{2} emissions from fuel $i$ (Mt). The additive LMDI-I form decomposes $\Delta C = C_T - C_0$ as
+\begin{equation}
+    \Delta C = \underbrace{\Delta C_{\text{act}}}_{\text{demand}} + \underbrace{\Delta C_{\text{str}}}_{\text{fuel mix}} + \underbrace{\Delta C_{\text{int}}}_{\text{efficiency}}
+\end{equation}
+with each component computed via the logarithmic-mean weight $L(C_i^0, C_i^T) = (C_i^T - C_i^0)/\ln(C_i^T/C_i^0)$. The implementation follows Ang's practical guide~\cite{ang2015} and is benchmarked against the published Chinese provincial study~\cite{liu2020}.
+
+\section{Bai--Perron Structural Break Test}
+\label{sec:method_breakpoint}
+
+To formally identify the inflection year in the electricity balance time series, the Bai--Perron procedure~\cite{baiperron1998, baiperron2003} is applied. Given a series $\{y_t\}_{t=1}^{N}$ modelled as $y_t = \mu_j + \varepsilon_t$ for $t \in [T_{j-1}+1, T_j]$ with unknown breakpoints $T_1, \ldots, T_m$, the supremum F-statistic
+\begin{equation}
+    \sup F(\ell) = \max_{T_1, \ldots, T_\ell \in \Delta} F(T_1, \ldots, T_\ell)
+\end{equation}
+is computed over all admissible partitions $\Delta$. Critical values for inference follow the tabulation in~\cite{baiperron2003}. The R/Python implementation of \cite{zeileis2003} is used.
+
+\section{Hybrid SARIMA-LSTM Model and the Transfer-Learning Forecaster}
+\label{sec:method_sarimalstm}
+
+The forecasting model combines a seasonal linear component capturing the annual cycle with a recurrent neural network capturing residual non-linearity:
+\begin{equation}
+    \hat{y}_t = \hat{y}^{\text{SARIMA}}_t + \hat{r}^{\text{LSTM}}_t, \qquad \hat{r}^{\text{LSTM}}_t = f_{\text{LSTM}}\left(y_{t-1} - \hat{y}^{\text{SARIMA}}_{t-1}, \ldots\right)
+\end{equation}
+The SARIMA component is implemented as an ARIMA(2,0,2) process augmented with annual Fourier seasonal regressors ($K = 4$ sine--cosine harmonics on a 365.25-day period); this is the standard practical formulation of seasonal ARIMA for daily series, where a classical seasonal order with period $s = 365$ is computationally intractable. The LSTM component is a single recurrent layer of 64 units followed by a 32-unit ReLU dense layer and a linear output, trained with the Adam optimizer (learning rate $10^{-3}$) on a 30-day look-back window over an 85/15 train/validation split; multi-step forecasts are produced recursively. The hybrid forecast adds an LSTM trained on the in-sample SARIMA residuals to the SARIMA forecast. Diagnostics include ACF/PACF inspection (Figure~\ref{fig:acf_pacf}), Ljung--Box residual tests, and Diebold--Mariano comparisons~\cite{dieboldmariano1995, hochreiter1997, hewamalage2021}.
+
+The hourly demand-forecasting task of Chapter~\ref{ch:ml_forecasting} uses a different model class. Because openly accessible high-frequency demand data for Kazakhstan are scarce, that chapter applies a \emph{transfer-learning} protocol~\cite{pan2010transfer, cai2020transfer}: a gradient-boosted decision-tree regressor is trained on a corpus that combines data-rich European hourly load with the Kazakhstan target series, and is benchmarked against an identical model trained on the Kazakhstan series alone (the non-transfer control) and a seasonal-naive baseline. Point forecasts carry 90\% split-conformal prediction intervals, and competing models are compared with the Diebold--Mariano test. The feature set, transfer protocol, and evaluation design are detailed in Chapter~\ref{ch:ml_forecasting}; the reported results come from a validated fast-run configuration rather than a full multi-horizon production run.
+
+\section{Multi-Criteria TOPSIS Analysis}
+\label{sec:method_topsis}
+
+TOPSIS~\cite{hwang1981} ranks alternatives $A_i$ ($i=1,\ldots,n$) on $k$ criteria by their relative closeness to the positive ideal solution. The normalized weighted decision matrix $V = [v_{ij}]$ is constructed as $v_{ij} = w_j \cdot r_{ij}$, where $r_{ij}$ is the vector-normalised performance value and $w_j$ is the criterion weight (with $\sum_j w_j = 1$). The relative closeness coefficient
+\begin{equation}
+    C_i^* = \frac{D_i^-}{D_i^+ + D_i^-}, \qquad
+    D_i^\pm = \sqrt{\sum_{j=1}^k (v_{ij} - v_j^\pm)^2}
+\end{equation}
+is used to rank the alternatives, with $C_i^* \in [0, 1]$ and higher values indicating preferred sites. \cite{mardani2017} and \cite{behzadian2012} survey applications and demonstrate the method's robustness for energy-infrastructure decisions.
+
+\section{Scenario Analysis}
+\label{sec:method_scenarios}
+
+Three contrasting 2030 scenarios are constructed for Kazakhstan's power sector:
+\begin{itemize}
+    \item \textbf{Baseline} --- continuation of the 2019--2024 trend in generation mix and demand growth;
+    \item \textbf{Accelerated RES} --- annual wind/solar capacity additions consistent with the IPCC 1.5$^\circ$C pathway~\cite{rogelj2018};
+    \item \textbf{Coal Phase-Out} --- rapid retirement of coal capacity in line with the 2060 carbon-neutrality strategy~\cite{moe2023strategy}.
+\end{itemize}
+Each scenario propagates installed capacities and capacity factors through the LMDI decomposition to obtain projected emissions trajectories.
+
+\section{Forecast Quality Metrics}
+\label{sec:method_metrics}
+
+Standard metrics are used to evaluate forecast quality:
+\begin{align}
+    \text{MAE}  &= \frac{1}{n}\sum_{i=1}^{n} |y_i - \hat{y}_i| \\
+    \text{RMSE} &= \sqrt{\frac{1}{n}\sum_{i=1}^{n} (y_i - \hat{y}_i)^2} \\
+    \text{sMAPE} &= \frac{100\%}{n}\sum_{i=1}^{n} \frac{|y_i - \hat{y}_i|}{(|y_i| + |\hat{y}_i|)/2} \\
+    \text{MASE} &= \frac{\text{MAE}}{\frac{1}{n-1}\sum_{i=2}^{n}|y_i - y_{i-1}|}
+\end{align}
+The Diebold--Mariano test~\cite{dieboldmariano1995} provides formal statistical comparison between forecasts. The null hypothesis is equal predictive accuracy under the squared-error loss, with $H_1$: model A outperforms model B. Critical values are obtained via the Newey--West variance estimator. The classical Box--Jenkins methodology requires preliminary stationarity analysis of the time series. Figure~\ref{fig:acf_pacf} shows the autocorrelation (ACF) and partial autocorrelation (PACF) functions for the wind capacity factor series, which were used to identify the orders of the SARIMA model.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.9\textwidth]{fig14_acf_pacf.pdf}
+    \caption[ACF and PACF of the wind capacity factor series]{Autocorrelation (ACF) and partial autocorrelation (PACF) functions for the daily wind capacity factor series, used for SARIMA order identification.}
+    \label{fig:acf_pacf}
+\end{figure}
+
+\section{Software Implementation}
+\label{sec:method_implementation}
+
+All computations are performed in Python 3.11. Key libraries:
+\begin{itemize}
+    \item \texttt{pandas}, \texttt{numpy} --- data manipulation;
+    \item \texttt{statsmodels}~\cite{seabold2010statsmodels} --- Bai--Perron, ARIMA/SARIMA, DM test;
+    \item \texttt{tensorflow}~\cite{abadi2016tensorflow} / \texttt{keras} --- the LSTM component of the hybrid SARIMA-LSTM model;
+    \item \texttt{catboost} / \texttt{scikit-learn}~\cite{pedregosa2011scikit} --- gradient-boosted regressors for the transfer-learning forecaster, preprocessing, scaling, metrics;
+    \item \texttt{matplotlib}, \texttt{seaborn} --- static publication figures;
+    \item \texttt{Power BI Desktop} --- interactive multi-page report used both as the source for several figures in Chapter~\ref{ch:energy_balance} and as a self-service exploration tool for stakeholders (see Appendix~\ref{app:dashboard});
+    \item \texttt{SQLite} --- relational storage.
+\end{itemize}

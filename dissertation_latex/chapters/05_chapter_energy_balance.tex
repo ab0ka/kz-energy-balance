@@ -1,0 +1,261 @@
+% =====================================================================
+% CHAPTER 5 — ENERGY BALANCE (Article 2 — full content)
+% =====================================================================
+
+\chapter{STATISTICAL ANALYSIS OF KAZAKHSTAN'S FUEL AND ENERGY BALANCE}
+\label{ch:energy_balance}
+
+\section{Introduction}
+\label{sec:eb_intro}
+
+In 2023, Kazakhstan became a net importer of electricity for the first time in its post-independence history~\cite{kegoc2024, statgov2024}. The structural causes of this transition had not been formally studied at the time of writing. This chapter presents a comprehensive multi-source statistical analysis of Kazakhstan's fuel and energy balance over 2019--2025.
+
+Applying \emph{LMDI decomposition}~\cite{ang2005, ang2015}, we quantify the relative contributions of demand growth, fuel switching, and renewable deployment to the dynamics of CO\textsubscript{2} emissions. Formal \emph{Bai--Perron} structural-break analysis~\cite{baiperron1998, baiperron2003} statistically identifies 2023 as the inflection point. \emph{Hybrid SARIMA-LSTM forecasting}~\cite{hewamalage2021, hochreiter1997} provides a 25.2\% MAE reduction over the naive benchmark for wind capacity-factor prediction. The analysis reveals that coal-to-gas switching --- not RES growth --- drove the coal share decline from 70.4\% to 54.0\%, while CO\textsubscript{2} emissions in the power sector remained on a plateau of 90--95~Mt~\cite{ember2024, owid2024}.
+
+\section{Data Sources and Methodology}
+\label{sec:eb_methodology}
+
+A detailed description of data sources and methods is presented in Chapter~\ref{ch:methodology}. This chapter applies:
+\begin{itemize}
+    \item LMDI decomposition (Section~\ref{sec:method_lmdi});
+    \item Bai--Perron structural-break test (Section~\ref{sec:method_breakpoint});
+    \item Hybrid SARIMA-LSTM model (Section~\ref{sec:method_sarimalstm});
+    \item MAE, RMSE, sMAPE, MASE metrics, and Diebold--Mariano test (Section~\ref{sec:method_metrics}).
+\end{itemize}
+
+\section{National Energy Profile and Generation Mix}
+\label{sec:eb_profile}
+
+The total energy supply (TES) of Kazakhstan is dominated by coal, with substantial contributions from oil and gas (Figure~\ref{fig:tes_structure}). The country ranks among the most carbon-intensive economies per capita; over the analyzed period, primary energy consumption grew steadily from $\sim$3.0 to $\sim$3.4~EJ/year~\cite{owid2024}. Figure~\ref{fig:kz_indicators} summarizes the headline indicators of the system over 2019--2024 --- the electricity balance, power-sector CO\textsubscript{2} emissions, energy intensity, and renewable generation --- which frame the analysis of this chapter. The geographic distribution of generating stations is highly uneven, with concentration in the northern industrial areas (Pavlodar, Karaganda) clearly visible in the fleet overview (Figure~\ref{fig:plant_overview}).
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.95\textwidth]{fig15_energy_indicators.pdf}
+    \caption[Key energy indicators of Kazakhstan, 2019--2024]{Key energy indicators of the Republic of Kazakhstan, 2019--2024: electricity balance, power-sector CO\textsubscript{2} emissions, energy intensity, and renewable (wind and solar) generation (sources: OWID, Ember, QazaqGreen).}
+    \label{fig:kz_indicators}
+\end{figure}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.85\textwidth]{fig1_tes_structure.pdf}
+    \caption[Primary energy consumption structure of Kazakhstan]{Primary energy consumption of Kazakhstan by source: 2024 snapshot and 2015--2024 trend (sources: OWID~\cite{owid2024}, Ember~\cite{ember2024}).}
+    \label{fig:tes_structure}
+\end{figure}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[page=1, width=\textwidth]{dashboard.pdf}
+    \caption[Overview of the Kazakhstan generation fleet]{Overview of the Kazakhstan generation fleet (interactive view): 144 plants with total installed capacity of 22{,}269~MW. The map shows the geographic distribution with bubble size proportional to capacity and color indicating fuel type. Aggregated KPIs and capacity breakdown by fuel and technology are shown alongside.}
+    \label{fig:plant_overview}
+\end{figure}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.9\textwidth]{fig3_generation_mix.pdf}
+    \caption{Electricity generation mix of Kazakhstan, 2019--2024.}
+    \label{fig:generation_mix}
+\end{figure}
+
+\textbf{Key observations:}
+\begin{itemize}
+    \item Coal share declined from 70.4\% (2019) to 54.0\% (2024);
+    \item Gas share grew from 18.6\% to 29.3\% (compensating for the coal exit);
+    \item Wind generation grew 7-fold: 0.71 $\to$ 4.91~TWh;
+    \item Solar generation has stagnated since 2022 at $\sim$1.87~TWh.
+\end{itemize}
+
+\section{LMDI Decomposition of CO\textsubscript{2} Emissions}
+\label{sec:eb_lmdi}
+
+The LMDI-I additive decomposition of changes in power-sector CO\textsubscript{2} emissions over 2019--2024 is presented in Table~\ref{tab:lmdi}. The dominant negative contribution comes from the structural effect (fuel switching from coal to gas), which is almost exactly offset by the positive activity effect (overall demand growth). Intensity gains (modest improvements in average thermal efficiency) provide a smaller additional negative contribution.
+
+\begin{table}[h!]
+\centering
+\caption{LMDI decomposition results of CO\textsubscript{2} emission changes in the power sector, 2019--2024 (sources: Ember~\cite{ember2024}, OWID~\cite{owid2024}; method: Ang~\cite{ang2005, ang2015})}
+\label{tab:lmdi}
+\begin{tabular}{@{}lrl@{}}
+\toprule
+Effect & $\Delta C$, Mt CO\textsubscript{2} & Interpretation \\
+\midrule
+Activity (demand growth) & $+10.2$ & Generation growth offsets savings \\
+Structure (fuel mix) & $-13.8$ & Coal-to-gas substitution dominates \\
+Intensity (efficiency) & $-2.5$ & Modest thermal efficiency gains \\
+\midrule
+\textbf{Total} & $\mathbf{+6.1}$ & Emissions essentially flat \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Key conclusion.} Kazakhstan is caught in a \emph{``gas substitution trap''} --- the coal-to-gas transition creates an illusion of decarbonization while delaying genuine structural transformation. The emission plateau at 90--95~Mt is consistent with international observations~\cite{griffiths2021} that gas substitution alone cannot deliver the trajectory required by the Paris Agreement~\cite{rogelj2018}.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.9\textwidth]{fig4_co2_emissions.pdf}
+    \caption{Dynamics of CO\textsubscript{2} emissions in Kazakhstan's power sector and electricity carbon intensity in international comparison.}
+    \label{fig:co2_emissions}
+\end{figure}
+
+\section{Structural Shift in the Electricity Balance}
+\label{sec:eb_breakpoint}
+
+The Bai--Perron test~\cite{baiperron2003, zeileis2003} identifies 2023 as a statistically significant structural break in the annual electricity balance series (sup~$F = 14.7$, $p < 0.01$):
+\begin{itemize}
+    \item Before break (2015--2022): mean balance $+2.1$~TWh/year (net exporter);
+    \item After break (2023--2025): mean balance $-2.5$~TWh/year (net importer).
+\end{itemize}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.9\textwidth]{fig12_re_transition.pdf}
+    \caption{Kazakhstan's electricity balance and RES share, 2015--2024.}
+    \label{fig:balance}
+\end{figure}
+
+The post-break regime corresponds to a structural shift of approximately 4.6~TWh/year in the net balance, which is too large to be attributed to short-term demand fluctuations and reflects a sustained mismatch between commissioned new capacity and retiring legacy capacity. The associated rise in the RES share (from $\sim$3\% to $\sim$8\% of generation) is not yet sufficient to close the structural gap.
+
+\section{Regional Demand and Cross-Border Trade Dynamics}
+\label{sec:eb_demand}
+
+Electricity demand in Kazakhstan exhibits pronounced spatial heterogeneity that mirrors the historical industrial geography of the Soviet era. The northern industrial corridor (Pavlodar, Karaganda, Akmola, North Kazakhstan, East Kazakhstan oblasts) accounts for approximately 60\% of national consumption due to concentrated metallurgical, chemical, and coal-mining facilities; the industrial regions of Pavlodar (20+~TWh/year) and Karaganda ($\sim$17~TWh/year) are the largest single consumers, followed by Almaty ($\sim$10~TWh/year). The western Caspian region (Atyrau, Mangystau) is dominated by oil and gas extraction loads, while the southern oblasts (Almaty, Turkestan) host the largest urban consumption centres but rely partly on imports from neighbouring Central Asian systems.
+
+The temporal load pattern (Figure~\ref{fig:load_duration}) shows a characteristic winter peak driven by district-heating loads served by CHP plants, with a secondary summer peak from cooling demand in the south.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.9\textwidth]{fig9_load_duration.pdf}
+    \caption[Load duration curve of Kazakhstan]{Load duration curve of the Kazakhstan power system, showing mean and base load levels.}
+    \label{fig:load_duration}
+\end{figure}
+
+Monthly cross-border flows with the three neighbouring countries (Russia, Uzbekistan, Kyrgyzstan) reveal distinct seasonal patterns shown in Figure~\ref{fig:trade_dashboard}: green lines represent exports from Kazakhstan, while red lines indicate imports.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[page=2, width=\textwidth]{dashboard.pdf}
+    \caption[Regional consumption and cross-border electricity trade]{Regional consumption (left, by oblast in GWh) and monthly cross-border electricity trade with Uzbekistan, Kyrgyzstan, and Russia. Green = exports from KZ, red = imports to KZ.}
+    \label{fig:trade_dashboard}
+\end{figure}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.9\textwidth]{fig4_trade_flows.pdf}
+    \caption{Aggregated annual cross-border electricity flows: Kazakhstan -- Russia / Kyrgyzstan / Uzbekistan.}
+    \label{fig:trade}
+\end{figure}
+
+The trade pattern with Russia is roughly balanced on an annual basis, with seasonal exports during summer and imports during winter peak hours. Trade with Uzbekistan is dominated by Kazakhstan's exports, while flows with Kyrgyzstan exhibit a notable summer spike due to Kyrgyz seasonal water-management constraints affecting hydropower availability.
+
+\section{Central Asia Comparative Analysis}
+\label{sec:eb_regional}
+
+Comparison with the four other Central Asian republics (Uzbekistan, Turkmenistan, Tajikistan, Kyrgyzstan) clarifies the relative position of Kazakhstan (Figure~\ref{fig:ca_comparison}). Kazakhstan has the highest per-capita generation (approximately 6~MWh/person/year), the highest fossil share, and the highest carbon intensity. Tajikistan and Kyrgyzstan, by contrast, derive over 90\% of generation from hydropower but face structural deficits during the winter dry-season. Uzbekistan combines the largest absolute consumption with the most aggressive solar-deployment plans for the late 2020s. The regional comparison underscores that Kazakhstan's transition pathway will shape the entire Central Asian electricity market.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.9\textwidth]{fig5_ca_comparison.pdf}
+    \caption{Comparison of energy indicators for 5 Central Asian countries (2023; sources: Ember~\cite{ember2024}, IRENA~\cite{irena2024}).}
+    \label{fig:ca_comparison}
+\end{figure}
+
+\section{RES Resource Potential Assessment}
+\label{sec:eb_re_potential}
+
+Renewable resource assessment combines installed-capacity statistics from IRENA~\cite{irena2024} with hourly meteorological reanalysis from ERA5-Land~\cite{munoz2021, hersbach2020}. Following the methodology of \cite{staffell2016} and \cite{pfenninger2016}, we compute regional capacity factors using bias-corrected wind and irradiance fields. Wind capacity factor reaches the highest values in northern and western coastal areas, where mean monthly values of 0.30--0.40 are achieved, while solar irradiance peaks in the southern oblasts at 5--6~kWh/m\textsuperscript{2}/day.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.9\textwidth]{fig5_re_capacity_factors.pdf}
+    \caption[Wind and solar capacity factors of Kazakhstan, 2011--2014]{Daily wind and solar PV capacity factors of Kazakhstan over 2011--2014 (top) and their empirical distributions (bottom), derived from ERA5-Land reanalysis.}
+    \label{fig:cf}
+\end{figure}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.95\textwidth]{fig13_wind_heatmap.pdf}
+    \caption[Spatio-temporal heatmap of wind capacity factor]{Spatio-temporal heatmap of wind capacity factor across Kazakhstan regions, indicating optimal sites and seasonal patterns.}
+    \label{fig:wind_heatmap}
+\end{figure}
+
+The country-level temporal profiles of solar irradiance and wind capacity factor are summarized in Figure~\ref{fig:res_potential}. Solar potential follows a strong seasonal pattern peaking at $\sim$150~kWh/m\textsuperscript{2}/day in May--August, while wind exhibits high day-to-day volatility throughout the year.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[page=3, width=\textwidth]{dashboard.pdf}
+    \caption[Solar and wind resource temporal profiles]{Country-level temporal profiles: monthly solar irradiance (top, kWh/m\textsuperscript{2}/day) and daily wind capacity factor (bottom).}
+    \label{fig:res_potential}
+\end{figure}
+
+\section{Forecasting Model Comparison}
+\label{sec:eb_forecasting}
+
+Six forecasting models are compared on the daily wind capacity-factor series over a 12-month out-of-sample horizon --- the 2014 test set (364 days), with 2011--2013 used for training (Table~\ref{tab:forecasting}). The naive persistence baseline (forecast $=$ last observation) is compared against Holt--Winters exponential smoothing, the classical ARIMA(2,0,2)~\cite{seabold2010statsmodels}, a vanilla LSTM~\cite{hochreiter1997}, a SARIMA model (ARIMA(2,0,2) augmented with annual Fourier seasonal terms), and a hybrid SARIMA-LSTM that adds an LSTM model of the SARIMA residuals.
+
+\begin{table}[h!]
+\centering
+\caption[Comparison of forecasting models for the wind capacity factor]{Comparison of forecasting models for the daily wind capacity factor (2014 out-of-sample test set, 364 days)}
+\label{tab:forecasting}
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+Model & MAE & RMSE & MAE Improvement \\
+\midrule
+Naive persistence & 0.1431 & 0.1673 & baseline \\
+Holt--Winters & 0.1256 & 0.1509 & 12.3\% \\
+ARIMA(2,0,2) & 0.1200 & 0.1505 & 16.2\% \\
+LSTM & 0.1159 & 0.1563 & 19.1\% \\
+SARIMA & 0.1085 & 0.1371 & 24.2\% \\
+\textbf{SARIMA-LSTM hybrid} & \textbf{0.1071} & \textbf{0.1382} & \textbf{25.2\%} $\checkmark$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+All models except the stand-alone LSTM achieve a statistically significant improvement over the naive baseline (Diebold--Mariano test~\cite{dieboldmariano1995}, $p < 0.001$); the stand-alone LSTM improvement is only marginally significant ($p \approx 0.055$). The hybrid model achieves the lowest MAE because the SARIMA component captures the strong annual seasonality of the wind capacity factor --- the summer minimum and the winter--spring maximum --- while the LSTM residual model adds a smaller correction for non-linear short-term structure. The Fourier-SARIMA seasonal component alone already delivers most of the gain (24.2\%), and the LSTM residual model lifts it to 25.2\%.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.9\textwidth]{fig7_arima_forecast.pdf}
+    \caption[SARIMA-LSTM forecast of the wind capacity factor]{Out-of-sample forecast of the daily wind capacity factor over the 2014 test horizon: the SARIMA and SARIMA-LSTM hybrid models track the seasonal cycle, whereas ARIMA(2,0,2) reverts to a flat mean. Panel~(b) zooms into the first 90 days of the test period.}
+    \label{fig:forecast}
+\end{figure}
+
+\section{Scenario Analysis}
+\label{sec:eb_scenarios}
+
+Three contrasting 2030 scenarios are constructed to bracket the policy space:
+\begin{itemize}
+    \item \textbf{Baseline} --- continuation of 2019--2024 trends in generation mix and demand growth;
+    \item \textbf{Accelerated RES} --- annual wind/solar capacity additions consistent with the IPCC 1.5$^\circ$C pathway~\cite{rogelj2018};
+    \item \textbf{Coal Phase-Out} --- rapid retirement of coal capacity in line with the 2060 carbon-neutrality strategy~\cite{moe2023strategy}.
+\end{itemize}
+The installed-capacity targets implied by these scenarios are summarized in Figure~\ref{fig:scenario_2030}. Propagating them through the LMDI decomposition shows that, under the Baseline, the emissions plateau persists; only the Coal Phase-Out scenario delivers a meaningful CO\textsubscript{2} reduction of 30--35\% by 2030. Accelerated RES alone, without active retirement of coal, yields only marginal emission improvement, confirming the gas-substitution-trap diagnosis of Section~\ref{sec:eb_lmdi}.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.95\textwidth]{fig8_scenario_2030.pdf}
+    \caption[Installed-capacity targets for the 2030 scenarios]{Installed-capacity targets by technology (coal, gas as CCGT+OCGT, hydro, solar PV, wind) for Kazakhstan's 2030 scenario relative to the baseline fleet.}
+    \label{fig:scenario_2030}
+\end{figure}
+
+\section{Decommissioning Outlook of the Generation Fleet}
+\label{sec:eb_decommissioning}
+
+A critical issue for Kazakhstan's power system is the impending wave of capacity retirements. Of the 22{,}269~MW currently installed across 144 plants, \textbf{39.58\%} (approximately 8{,}800~MW) is scheduled for decommissioning before 2030 due to age, primarily affecting hard-coal generation. Figure~\ref{fig:decom_outlook} shows the temporal distribution of retirements in 5-year buckets, with the most acute period being 2000--2005 (already past, equipment lifetime extended) and a second wave expected in 2025--2040.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[page=4, width=\textwidth]{dashboard.pdf}
+    \caption[Decommissioning timeline of the KZ generation fleet]{Decommissioning timeline of the Kazakhstan generation fleet (5-year buckets, 1960--2100), with KPI summary: 22~K MW total fleet, 39.58\% retiring by 2030, 144 plants.}
+    \label{fig:decom_outlook}
+\end{figure}
+
+This impending retirement wave creates simultaneously \emph{a risk} (deficit deepening if replacement is delayed) and \emph{an opportunity} (a window for direct replacement of retiring coal capacity by RES rather than gas, breaking the substitution trap discussed in Section~\ref{sec:eb_lmdi}).
+
+\section{Chapter Conclusions}
+\label{sec:eb_conclusions}
+
+\begin{enumerate}
+    \item The structural break in Kazakhstan's electricity balance is statistically confirmed in 2023 ($p < 0.01$).
+    \item The decline in coal share from 70.4\% to 54.0\% was offset by gas growth (18.6\% $\to$ 29.3\%), which did not lead to a reduction in CO\textsubscript{2} emissions (90--95~Mt plateau).
+    \item The hybrid SARIMA-LSTM model achieved the lowest forecast error among the six models compared: a 25.2\% MAE reduction over the naive benchmark ($p < 0.001$, Diebold--Mariano test).
+    \item The carbon intensity of Kazakhstan's electricity is 802~gCO\textsubscript{2}/kWh --- 2~$\times$ higher than the world level and 3.5~$\times$ higher than the EU level.
+    \item 39.58\% of operating generating capacities will be decommissioned by 2030, creating both an opportunity window and a deficit risk.
+\end{enumerate}

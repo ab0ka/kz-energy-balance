@@ -1,0 +1,102 @@
+% =====================================================================
+% CHAPTER 4 — AI DATA CENTERS (Article 1)
+% =====================================================================
+
+\chapter{AI DATA CENTER INFRASTRUCTURE IN KAZAKHSTAN}
+\label{ch:aidc}
+
+\section{Introduction to the Problem}
+\label{sec:aidc_intro}
+
+\textit{Where this chapter fits in the dissertation.} This chapter develops the third component of the dissertation's analysis of Kazakhstan's fuel and energy balance. Chapters~\ref{ch:energy_balance} and~\ref{ch:ml_forecasting} diagnose the structural electricity deficit that emerged in 2023 and develop forecasting tools for renewable supply and electricity demand; the present chapter asks \emph{where}, within this stressed grid, a large new AI-driven load should be added. Hyperscale AI data centers consume 30--100~MW each --- comparable to a medium-sized Kazakh city --- and their siting therefore interacts directly with the balance issues diagnosed in the chapters that follow. The multi-criteria TOPSIS framework developed below is the natural application layer of the dissertation's balance and forecasting work: it converts the structural picture of the Kazakhstan grid into a defensible infrastructure decision.
+
+The rapid expansion of artificial intelligence has transformed data centers from a steady but modestly growing electricity-demand sector into one of the fastest-growing sources of marginal load globally. \cite{masanet2020} recalibrated earlier estimates and showed that, despite substantial efficiency gains during 2010--2018, the absolute energy footprint continued to increase. The IEA~\cite{iea2024dc} projects that global data-center electricity demand could double between 2023 and 2026 if current generative-AI deployment trends continue, while the U.S.\ baseline study~\cite{shehabi2024} estimates that data centers may account for 6.7--12\% of total U.S.\ electricity by 2028 (Figure~\ref{fig:dc_global}).
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.9\textwidth]{aidc_fig1_global_dc_energy.png}
+    \caption[Global data center energy consumption trajectory]{Global data center energy consumption trajectory and projections (sources: IEA~\cite{iea2024dc}, Masanet~et~al.~\cite{masanet2020}).}
+    \label{fig:dc_global}
+\end{figure}
+
+For Kazakhstan, the question is not whether to host AI data centers but \emph{where} and \emph{how}. The country's continental climate provides extended free-cooling periods, electricity prices are competitive, and geographic position offers low-latency connectivity to both European and East Asian markets. However, water scarcity in the south, grid carbon intensity, and seismic risk in the southeast create non-trivial trade-offs. This chapter develops a multi-criteria framework for evaluating candidate sites.
+
+\section{Total Cost of Ownership (TCO) Analysis}
+\label{sec:aidc_tco}
+
+The Total Cost of Ownership of a data center is decomposed into capital expenditures (CapEx) and recurring operational expenditures (OpEx) discounted over the planning horizon~$T$:
+\begin{equation}
+    \text{TCO} = \text{CapEx} + \sum_{t=1}^{T} \frac{\text{OpEx}_t + E_t \cdot p_e + W_t \cdot p_w + M_t}{(1 + r)^t}
+\end{equation}
+where $E_t$ is annual electricity consumption, $p_e$ is the average electricity price, $W_t$ is annual water consumption, $p_w$ is the unit price of water, $M_t$ is annual maintenance, and $r$ is the discount rate. The IT load is sized according to typical hyperscale rack densities of 8--15~kW/rack, and the total facility load is obtained as IT load $\times$ PUE.
+
+Figure~\ref{fig:tco_breakdown} shows the TCO breakdown by component for a 35~MW reference data center over a 10-year horizon, benchmarking two Kazakhstan supply scenarios (grid-powered and direct-renewable) against the international reference locations Germany, the United States, and Iceland. Electricity dominates the OpEx envelope at all sites; CapEx contributes 25--35\% depending on land cost and grid-connection requirements. Figure~\ref{fig:tco_sensitivity} performs a sensitivity analysis of the 10-year TCO with respect to the electricity tariff, contrasting the lower-CapEx Kazakhstan cost curve with the higher-CapEx United States benchmark; electricity price is confirmed as the dominant operational cost driver.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.9\textwidth]{aidc_fig5_tco_breakdown.png}
+    \caption[TCO breakdown by component for a 35~MW data center]{Total Cost of Ownership breakdown by component (CapEx, electricity OpEx, other OpEx) for a 35~MW reference data center over a 10-year horizon: two Kazakhstan supply scenarios (grid and direct renewable) benchmarked against Germany, the United States, and Iceland.}
+    \label{fig:tco_breakdown}
+\end{figure}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.9\textwidth]{aidc_fig12_tco_sensitivity.png}
+    \caption[Sensitivity analysis of TCO to the electricity tariff]{Sensitivity analysis of the 10-year TCO with respect to the electricity tariff, comparing the lower-CapEx Kazakhstan cost curve with the higher-CapEx United States benchmark and identifying electricity price as the dominant cost driver.}
+    \label{fig:tco_sensitivity}
+\end{figure}
+
+\section{Power Usage Effectiveness (PUE)}
+\label{sec:aidc_pue}
+
+PUE is defined as the ratio of total facility energy to IT-equipment energy. Industry-leading hyperscale facilities operate at PUE $\approx 1.10$--$1.20$, while typical legacy enterprise data centers exceed 1.7. The favorable continental climate of Kazakhstan, with cold winters and moderate summers, provides natural cooling potential that can substantially reduce mechanical-cooling load. The relevant cooling regimes are:
+\begin{itemize}
+    \item \emph{Free cooling} (direct outside-air, available below 18$^\circ$C dry-bulb);
+    \item \emph{Evaporative} (adiabatic, available below 25$^\circ$C wet-bulb);
+    \item \emph{Chiller-based} (mechanical refrigeration, always available).
+\end{itemize}
+Figure~\ref{fig:pue_comparison} compares the projected monthly PUE of a candidate Astana data center against leading international hubs. Owing to its long free-cooling season, Astana achieves an annualized PUE of approximately 1.12 --- on par with the Nordic benchmark of Helsinki ($\sim$1.11) and far below warm-climate hubs such as Ashburn ($\sim$1.41) and Singapore ($\sim$1.56). By contrast, southern Kazakhstan sites (Almaty, Shymkent) require mechanical cooling for an additional 1500--2000~hours/year, which would raise their PUE to 1.35--1.40.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.9\textwidth]{aidc_fig4_pue_comparison.png}
+    \caption[Monthly PUE of Astana vs.\ international data-center hubs]{Monthly PUE profile of a candidate Astana data center compared with leading international hubs (Helsinki, Ashburn, Singapore); Astana's continental climate yields an annual average PUE of approximately 1.12.}
+    \label{fig:pue_comparison}
+\end{figure}
+
+\section{Multi-Criteria TOPSIS Site Selection}
+\label{sec:aidc_topsis}
+
+A TOPSIS analysis~\cite{hwang1981, behzadian2012, mardani2017} was performed across 11 criteria covering technical, economic, environmental, and regulatory dimensions: (1)~electricity price, (2)~free-cooling hours, (3)~water availability, (4)~seismic risk, (5)~grid stability, (6)~fiber connectivity, (7)~land cost, (8)~regulatory environment, (9)~proximity to demand centers, (10)~renewable-energy share in the local mix, and (11)~skilled-workforce availability. Criterion weights were assigned via expert elicitation and stakeholder workshops, then normalized to sum to unity.
+
+The relative-closeness coefficients for the candidate sites are presented in Figure~\ref{fig:topsis_results}. Northern locations dominate the ranking due to their combination of cold climate (low PUE) and proximity to existing high-voltage transmission infrastructure. The two leading candidates --- Astana ($C^* = 0.72$) and Pavlodar/Ekibastuz ($C^* = 0.68$) --- exceed the 0.65 threshold, followed by Karaganda (0.53); the southern and western alternatives, Almaty (0.45) and Aktau (0.31), are penalised mainly by water-availability and grid constraints.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.9\textwidth]{aidc_fig8_topsis.png}
+    \caption[TOPSIS site ranking results]{TOPSIS multi-criteria site ranking results for candidate AI data center locations in Kazakhstan, with the relative closeness coefficient $C^*$ on the vertical axis.}
+    \label{fig:topsis_results}
+\end{figure}
+
+\section{Results and Recommendations}
+\label{sec:aidc_results}
+
+The combined TCO and TOPSIS analyses identify the northern industrial corridor (Pavlodar, Karaganda, Astana) as the optimal region for hyperscale AI data-center deployment in Kazakhstan. Specifically:
+\begin{enumerate}
+    \item \textbf{Pavlodar} offers the lowest projected TCO ($\sim$\$520--560/kW-year) due to low electricity prices, abundant industrial water, and existing transmission capacity from coal CHP plants;
+    \item \textbf{Astana} provides the best regulatory and connectivity profile with moderate TCO ($\sim$\$580--620/kW-year);
+    \item \textbf{Almaty} is preferred only for latency-sensitive content-delivery workloads serving Central Asian end-users; for training workloads it is dominated by northern alternatives.
+\end{enumerate}
+
+Two structural risks should be flagged for any deployment: (a)~the current grid carbon intensity of 802~gCO\textsubscript{2}/kWh undermines ESG claims and may require dedicated renewable PPAs; (b)~water consumption in the southern sites is on the order of 15--25 ML/MW-year for evaporative cooling, which conflicts with regional agricultural needs.
+
+\section{Chapter Conclusions}
+\label{sec:aidc_conclusions}
+
+\begin{enumerate}
+    \item Kazakhstan offers a competitive combination of low electricity price, free-cooling hours, and strategic geographic position for AI data center deployment;
+    \item Total Cost of Ownership at northern sites is 15--25\% lower than southern alternatives, dominated by electricity OpEx;
+    \item Power Usage Effectiveness can be brought to approximately 1.12--1.20 in northern climates with conventional cooling architectures;
+    \item Multi-criteria TOPSIS analysis confirms Astana, Pavlodar/Ekibastuz, and Karaganda as the top three candidate sites;
+    \item Renewable-PPA contracting is recommended to mitigate the high grid carbon intensity (802~gCO\textsubscript{2}/kWh).
+\end{enumerate}

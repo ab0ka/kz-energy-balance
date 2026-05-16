@@ -1,0 +1,103 @@
+% =====================================================================
+% CHAPTER 6 — ELECTRICITY DEMAND FORECASTING WITH EU-TO-KZ TRANSFER LEARNING
+% (Article 3, full content)
+% =====================================================================
+
+\chapter{ELECTRICITY DEMAND FORECASTING WITH EU-TO-KZ TRANSFER LEARNING}
+\label{ch:ml_forecasting}
+
+\section{Introduction}
+\label{sec:ml_intro}
+
+Accurate short-horizon forecasts of electricity demand are a prerequisite for unit commitment, balancing, and reserve scheduling. For Kazakhstan, the forecasting task is complicated less by methodology than by data: openly accessible, high-frequency demand series for the national power system are scarce, while modern data-hungry forecasting methods need long, granular training records~\cite{hewamalage2021, makridakis2018}. This chapter addresses that gap with a transparent \emph{transfer-learning} workflow built entirely on open or reproducibly derived data: a model is pretrained on data-rich European hourly load and then adapted to the data-scarce Kazakhstan target domain.
+
+The contribution is twofold. First, it assembles a reproducible open-data package --- canonical hourly load, weather-proxy, calendar, and macro-energy tables --- that makes the Kazakhstan demand-forecasting problem tractable. Second, it quantifies, with a formal statistical test, whether pretraining on European load actually improves forecast accuracy for Kazakhstan relative to a model trained on the target data alone.
+
+\section{Concept of Transfer Learning for Power Systems}
+\label{sec:ml_transfer}
+
+The core idea of transfer learning~\cite{pan2010transfer} is to reuse representations learned on a data-rich source domain to bootstrap a model for a data-scarce target domain. For demand forecasting, the source domain is the European Union --- a set of national systems with long, openly published hourly load series --- and the target domain is the Kazakhstan power system, for which only a short and partly reconstructed hourly record is available. The transferable structure is the relationship between calendar effects, autoregressive load dynamics, weather proxies, and the next-hour demand: these relationships are partly universal across thermally dominated, winter-peaking systems, so a model exposed to European load patterns can carry useful inductive bias into the Kazakhstan domain.
+
+Transfer-learning approaches for short-term load forecasting have been demonstrated by \cite{cai2020transfer}, and for short-term wind-speed prediction by \cite{hu2019transfer}. The contribution of this chapter is to apply the idea to the Kazakhstan system under a strict open-data constraint, and --- crucially --- to test it against a non-transfer control rather than assuming the transfer benefit.
+
+\section{Forecasting Framework}
+\label{sec:ml_architecture}
+
+Three models are evaluated at the 24-hour forecast horizon:
+\begin{itemize}
+    \item \textbf{Seasonal naive} --- $\hat{y}_{t+h} = y_{t+h-24}$, yesterday's value at the same hour. A trivial but hard-to-beat operational benchmark.
+    \item \textbf{Gradient-boosted model, non-transfer} --- a gradient-boosted decision-tree regressor (the CatBoost implementation) trained \emph{only} on the Kazakhstan target series.
+    \item \textbf{Gradient-boosted model, transfer} --- the same regressor trained on a mixed corpus that combines the European source-domain load with the Kazakhstan target series, so that the European patterns inform the Kazakhstan forecast.
+\end{itemize}
+Feature engineering is identical across the two gradient-boosted models: autoregressive lags at $1, 2, 3, 6, 12, 24, 48,$ and $168$~hours, rolling-mean features, calendar indicators (hour, day of week, month, holiday), annual macro-energy features, and Kazakhstan weather/resource proxy inputs. Point forecasts are accompanied by 90\% prediction intervals produced with split-conformal calibration from the validation residuals. Models are compared on the metrics of Section~\ref{sec:method_metrics} (MAE, RMSE, sMAPE, MASE) plus the prediction-interval coverage probability (PICP), and pairs of models are compared with the Diebold--Mariano test~\cite{dieboldmariano1995}.
+
+\section{Data Sources and Canonical Tables}
+\label{sec:ml_eu_data}
+
+The workflow is driven by four canonical tables built from open data: an hourly load table (190{,}649 rows), an hourly weather-proxy table, a calendar table, and an annual macro-energy table. The hourly load table covers eleven regions --- ten European systems (AT, BE, CZ, DE, ES, FR, IT, NL, PL, SE) as the transfer source and the Kazakhstan unified system (\verb|KZ_SYSTEM|) as the target. European hourly load is derived from ENTSO-E transparency data; the Kazakhstan target series is constructed from open monthly demand-validation data through a documented, transparent monthly-to-hourly disaggregation. Kazakhstan target coverage spans 2011--2018.
+
+It must be stated plainly that the Kazakhstan hourly target is a \emph{synthetic disaggregation}, not directly metered hourly load. This is a deliberate consequence of the open-data constraint, and it bounds the strength of the conclusions: the chapter validates the transfer-learning \emph{workflow}, not a final operational forecast.
+
+\section{Transfer Protocol and Evaluation Design}
+\label{sec:ml_adapt}
+
+The transfer protocol is deliberately simple and auditable:
+\begin{enumerate}
+    \item The Kazakhstan target series is split chronologically into training, validation, and test segments, with the most recent segment held out for evaluation.
+    \item The \emph{non-transfer} model is fitted on the Kazakhstan training segment only.
+    \item The \emph{transfer} model is fitted on a mixed corpus of European source-domain load and the same Kazakhstan training segment.
+    \item Both models, and the seasonal-naive baseline, are evaluated on the identical held-out Kazakhstan test segment, so that any difference is attributable to the training corpus rather than the test data.
+    \item A rolling-origin backtest provides a second, fold-based check of stability.
+\end{enumerate}
+This design isolates the transfer effect: the non-transfer model is the control, and the only thing that changes for the transfer model is the addition of European data to the training corpus.
+
+\section{Experimental Results}
+\label{sec:ml_results}
+
+\textbf{Scope note.} The results below come from the repository's validated fast-run configuration --- a reduced training subset and a single (24-hour) horizon --- rather than the full multi-horizon production run. The fast-run package is sufficient to establish the direction and significance of the transfer effect; extending it to the full configuration is identified as further work in Section~\ref{sec:ml_conclusions}.
+
+Table~\ref{tab:ml_expected_results} reports the forecast metrics on the held-out Kazakhstan test segment at the 24-hour horizon. The transfer model attains the lowest error on every point metric: an sMAPE of 4.10\%, against 5.18\% for the non-transfer control and 6.85\% for the seasonal-naive baseline. Relative to the seasonal naive, the transfer model reduces sMAPE by 40.1\%; relative to the non-transfer control, it reduces sMAPE by 20.8\%.
+
+\begin{table}[h!]
+\centering
+\caption[Demand-forecasting model comparison for Kazakhstan (24-hour horizon)]{Demand-forecasting model comparison for the Kazakhstan power system at the 24-hour horizon (held-out test segment; fast-run configuration). Demand metrics in MW; PICP for a nominal 90\% interval.}
+\label{tab:ml_expected_results}
+\begin{tabular}{@{}lrrrrr@{}}
+\toprule
+Model & MAE & RMSE & sMAPE & MASE & PICP\textsubscript{90} \\
+ & (MW) & (MW) & (\%) & & (\%) \\
+\midrule
+Seasonal naive & 729.1 & 1248.4 & 6.85 & 1.39 & 85.1 \\
+Gradient boosting (non-transfer) & 612.9 & 840.9 & 5.18 & 1.17 & 91.3 \\
+\textbf{Gradient boosting (transfer)} & \textbf{473.6} & \textbf{617.5} & \textbf{4.10} & \textbf{0.90} & 85.9 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The improvement is statistically significant. The Diebold--Mariano test~\cite{dieboldmariano1995} rejects equal predictive accuracy between the transfer model and the seasonal naive ($\mathrm{DM} = -6.36$, $p < 10^{-9}$) and between the transfer model and the non-transfer control ($\mathrm{DM} = -4.01$, $p < 10^{-4}$). A two-fold rolling-origin backtest confirms the stability of the result, with per-fold sMAPE of 4.02\% and 5.48\%. Figure~\ref{fig:forecast} shows the transfer forecast against observed demand over the full test period and a representative two-week window with the 90\% conformal interval.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\textwidth]{fig6_transfer_forecast.pdf}
+    \caption[EU-to-KZ transfer forecast of Kazakhstan hourly demand]{Out-of-sample 24-hour-ahead forecast of Kazakhstan hourly electricity demand: (a)~the full test period at daily-mean resolution; (b)~a representative 14-day window with the 90\% conformal prediction interval. The EU-to-KZ transfer model tracks the demand cycle closely, whereas the seasonal-naive baseline is visibly noisier.}
+    \label{fig:forecast}
+\end{figure}
+
+\section{Discussion of the Transfer Effect}
+\label{sec:ml_comparison}
+
+Two points deserve emphasis. First, the transfer effect is genuine in this configuration: adding European source-domain load to the training corpus improves the Kazakhstan forecast by a margin that is both economically meaningful and statistically significant. This is consistent with the view that thermally dominated, winter-peaking systems share enough load structure for cross-regional pretraining to carry useful inductive bias.
+
+Second, the result is sensitive to modelling choices and must not be over-claimed. Earlier fast-run experiments with a plain gradient-boosting fallback found the transfer variant \emph{behind} the non-transfer control --- a reminder that the transfer benefit depends on the base learner and on source-target alignment, and that the non-transfer control is an essential part of the experiment rather than a formality. The prediction intervals are also imperfectly calibrated: the transfer model's PICP of 85.9\% is below the nominal 90\%, so the conformal calibration is slightly too narrow and would need a dedicated recalibration pass before operational use.
+
+\section{Chapter Conclusions}
+\label{sec:ml_conclusions}
+
+\begin{enumerate}
+    \item A reproducible, open-data EU-to-KZ transfer-learning workflow for Kazakhstan hourly electricity demand forecasting has been assembled and evaluated, comprising canonical data tables, a non-transfer control, a transfer model, and a seasonal-naive baseline;
+    \item At the 24-hour horizon, the transfer model is the most accurate: it reduces sMAPE to 4.10\%, a 40.1\% improvement over the seasonal-naive baseline and a 20.8\% improvement over the non-transfer control, with both gains significant under the Diebold--Mariano test ($p < 10^{-4}$);
+    \item The transfer benefit is real but configuration-dependent --- it was not observed with a weaker base learner --- which is why the experiment is built around an explicit non-transfer control;
+    \item The framework can in principle be extended to other Central Asian systems sharing the same winter-peaking, thermally dominated structure.
+\end{enumerate}
+
+\textbf{Further work.} Before the result is treated as operationally definitive, the following steps are required: (i)~a full-scale run on the complete training corpus rather than the fast-run subset; (ii)~evaluation across all four planned horizons (1~h, 6~h, 24~h, 168~h) rather than 24~h alone; (iii)~replacement of the synthetic Kazakhstan hourly target with directly metered KEGOC load once it becomes available; and (iv)~a dedicated recalibration of the conformal prediction intervals, whose current coverage (PICP~$=85.9\%$) falls short of the nominal 90\%.

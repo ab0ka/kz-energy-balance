@@ -1,0 +1,130 @@
+% =====================================================================
+% APPENDIX B — DATABASE STRUCTURE AND CODE REPOSITORY
+% =====================================================================
+
+\chapter{Database Structure and Code Repository}
+\label{app:data}
+
+\section*{B.1. SQLite Database Structure}
+
+The database \verb|kz_energy_balance.db| (size 2.7 MB) contains 18 tables
+with a total of 34{,}362 rows.
+
+\begin{table}[h!]
+\centering
+\caption{List of tables in the consolidated database}
+\label{tab:db_tables}
+\small
+\begin{tabular}{@{}llrr@{}}
+\toprule
+\# & Table & Rows & Columns \\
+\midrule
+1 & balance\_long & 8{,}277 & 7 \\
+2 & balance\_wide\_by\_fuel & 332 & 134 \\
+3 & by\_fuel\_group\_TJ & 132 & 4 \\
+4 & electricity\_balance & 8 & 92 \\
+5 & kegoc\_balance & 18 & 7 \\
+6 & kegoc\_balance\_wide & 9 & 3 \\
+7 & korem\_hourly & 21{,}792 & 10 \\
+8 & korem\_monthly & 30 & 8 \\
+9 & meta & 5 & 2 \\
+10 & mirror\_test\_dm & 18 & 6 \\
+11 & mirror\_test\_metrics & 12 & 8 \\
+12 & ml\_diebold\_mariano & 4 & 5 \\
+13 & ml\_dm\_renewable\_cf & 8 & 6 \\
+14 & ml\_metrics & 5 & 6 \\
+15 & ml\_metrics\_all\_targets & 17 & 7 \\
+16 & ml\_metrics\_renewable\_cf & 10 & 7 \\
+17 & ml\_predictions & 45 & 7 \\
+18 & ml\_predictions\_renewable\_cf & 3{,}640 & 5 \\
+\midrule
+& \textbf{Total} & \textbf{34{,}362} & --- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section*{B.2. Repository Structure}
+
+The full project repository (relative to its root) is organized as follows:
+
+{\footnotesize
+\begin{verbatim}
+Dissertation/
+|-- Dissertation_Document/        # This thesis (LaTeX)
+|   |-- main.tex                  # Entry point
+|   |-- refs.bib                  # Bibliography
+|   |-- chapters/                 # All chapters
+|   |-- figures/                  # Figures
+|   `-- compile.bat               # Compile script
+|
+|-- 01_AI_DataCenter_Kazakhstan/  # Article 1: AI Data Centers
+|
+|-- 02_Energy_Balance_and_        # Article 2: Energy Balance
+|       Demand_Forecasting_KZ/
+|   `-- Article/
+|       |-- Final/
+|       |   |-- main.tex          # Article 2 manuscript
+|       |   |-- Energy.pbix       # Power BI dashboard
+|       |   `-- figures/          # Figures
+|       |-- data/clean/
+|       |   `-- kz_energy_balance.db
+|       `-- scripts/              # ETL + forecasting (Python)
+|           |-- forecast_renewable_cf.py
+|           `-- transfer_forecasting/
+|
+`-- 03_ML_Renewable_Forecasting_  # Exploratory CNN-LSTM draft
+        CNN_LSTM/                 # (not used in this thesis)
+\end{verbatim}
+}
+
+\section*{B.3. Reproducibility}
+
+For full reproducibility of the analysis, execute (paths relative to project root):
+
+{\footnotesize
+\begin{verbatim}
+# 1. Install dependencies
+cd 02_Energy_Balance_and_Demand_Forecasting_KZ
+pip install -r requirements.txt
+
+# 2. Run the ETL pipeline (data parser)
+cd Article
+python scripts/data_parser.py
+
+# 3. Wind capacity-factor forecasting pipeline
+#    (6-model comparison + SARIMA-LSTM hybrid)
+python scripts/forecast_renewable_cf.py
+
+# 4. Inspect the database
+python ../db_info.py
+
+# 5. Open the Power BI dashboard
+start Final/Energy.pbix      # Windows
+open  Final/Energy.pbix      # macOS
+
+# 6. Compile the manuscript (pdflatex x3 + bibtex)
+cd Final
+pdflatex main.tex
+bibtex main
+pdflatex main.tex
+pdflatex main.tex
+
+# 7. Compile this thesis document
+cd ../../../Dissertation_Document
+compile.bat                  # Windows
+\end{verbatim}
+}
+
+\section*{B.4. Software and Library Versions}
+
+\begin{itemize}
+    \item Python 3.11+
+    \item pandas 2.x, numpy 1.26+
+    \item statsmodels 0.14+
+    \item tensorflow 2.15+, keras 2.15+
+    \item scikit-learn 1.3+
+    \item matplotlib 3.8+, seaborn 0.13+
+    \item SQLite 3.40+
+    \item Power BI Desktop 2.153+
+    \item MiKTeX 25.x or TeX Live 2024+
+\end{itemize}

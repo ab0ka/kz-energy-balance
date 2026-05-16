@@ -1,0 +1,39 @@
+% =====================================================================
+% ABSTRACT  (per ДП-AITU-19 §34 — one A4 page: aim, objectives, methods, results)
+% =====================================================================
+
+\chapter*{ABSTRACT}
+\addcontentsline{toc}{chapter}{Abstract}
+
+\begingroup
+\singlespacing
+\setlength{\parskip}{3pt}
+\setlength{\parindent}{0pt}
+
+\textbf{Topic:} Statistical Analysis for the Fuel and Energy Balance of Kazakhstan.
+
+\textbf{Volume:} 58 pages (main text), 27 figures, 5 tables, 3 appendices, 48 references.
+
+\textbf{Keywords:} energy balance, demand forecasting, LMDI decomposition, Bai--Perron test, SARIMA-LSTM, transfer learning, Kazakhstan.
+
+\textbf{Object of research:} the processes shaping the fuel and energy balance of Kazakhstan over 2019--2025.
+
+\textbf{Aim:} to develop a multi-level statistical and machine learning analysis of the structural drivers of Kazakhstan's electricity deficit and build forecasting models for the fuel and energy balance.
+
+\textbf{Objectives:} (1)~systematize balance data from 8 open sources; (2)~quantify CO\textsubscript{2} emission drivers by LMDI decomposition; (3)~detect the structural break with the Bai--Perron test; (4)~forecast renewable capacity factors and electricity demand; (5)~assess AI data-center siting by multi-criteria analysis; (6)~build a reproducible database and dashboard.
+
+\textbf{Research methods:} LMDI decomposition, the Bai--Perron structural-break test, a hybrid SARIMA-LSTM model, an EU-to-KZ transfer-learning forecaster, scenario analysis, and multi-criteria TOPSIS.
+
+\textbf{Main results:}
+\begin{itemize}[leftmargin=*, topsep=1pt, itemsep=1pt]
+    \item A statistically significant structural break was identified in 2023 (Bai--Perron, sup~$F = 14.7$, $p < 0.01$): Kazakhstan moved from net exporter ($+2.1$~TWh/yr) to net importer ($-2.5$~TWh/yr).
+    \item The ``gas substitution trap'' was quantified: coal-to-gas switching cut emissions by $13.8$~Mt CO\textsubscript{2}, but demand growth ($+10.2$~Mt) almost fully offset it, holding power-sector emissions on a 90--95~Mt plateau.
+    \item The hybrid SARIMA-LSTM model cut wind capacity-factor forecast error by 25.2\% (MAE) over the naive benchmark; the EU-to-KZ transfer model cut demand-forecast error by 40.1\% ($p < 0.001$, Diebold--Mariano test).
+    \item A consolidated SQLite database (18 tables, 34{,}362 rows) and an interactive Power BI dashboard make every result reproducible.
+\end{itemize}
+
+\textbf{Scientific novelty:} for the first time for Kazakhstan, the ``gas substitution trap'' is quantified, the 2023 structural break is formally established, and an EU-to-KZ transfer-learning forecaster is demonstrated on a reproducible open-data baseline.
+
+\textbf{Practical significance:} the results support long-term energy strategy planning, operational demand forecasting for KEGOC and KOREM, and the justification of renewable energy investments.
+
+\endgroup

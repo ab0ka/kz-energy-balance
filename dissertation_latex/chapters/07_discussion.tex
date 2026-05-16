@@ -1,0 +1,68 @@
+% =====================================================================
+% CHAPTER 7 — DISCUSSION
+% =====================================================================
+
+\chapter{DISCUSSION OF RESULTS}
+\label{ch:discussion}
+
+\section{Synthesis of Three Studies}
+\label{sec:disc_synthesis}
+
+The three component studies presented in Chapters~\ref{ch:aidc}--\ref{ch:ml_forecasting} form a coherent narrative of Kazakhstan's energy transition. Chapter~\ref{ch:aidc} demonstrates that the new technological demand driven by AI workloads will arrive in an environment of structural transition; data-center site decisions cannot be made independently of the underlying grid trajectory. Chapter~\ref{ch:energy_balance} quantifies that the current trajectory is dominated by coal-to-gas substitution rather than renewable deployment, with the formal Bai--Perron analysis confirming 2023 as the inflection year~\cite{baiperron2003}. Chapter~\ref{ch:ml_forecasting} provides the operational toolkit --- an EU-to-KZ transfer-learning forecaster --- that lets the data-scarce Kazakhstan demand record be augmented with data-rich European load for accurate short-horizon forecasting.
+
+Taken together, the studies suggest a policy ordering: improve operational planning via accurate demand forecasting (Chapter~6 instrumentation), evaluate the structural drivers explicitly via LMDI (Chapter~5 diagnostics), and channel new demand --- especially from AI data centers (Chapter~4) --- toward sites that maximize renewable utilization rather than locking-in further gas dependence.
+
+\section{The Gas Substitution Trap}
+\label{sec:disc_gas_trap}
+
+The LMDI decomposition (Section~\ref{sec:eb_lmdi}) attributed the dominant negative structural effect ($\Delta C_{\text{str}} = -13.8$~Mt CO\textsubscript{2}) to coal-to-gas substitution, while the activity effect ($\Delta C_{\text{act}} = +10.2$~Mt) almost exactly cancelled it. The net result --- a 6.1~Mt rise in total power-sector emissions over 2019--2024 --- belies the apparent ``progress'' of falling coal share. This pattern, which we term the \emph{gas substitution trap}, is consistent with the general finding of \cite{griffiths2021} that natural gas, while cleaner than coal at the combustion stage, sustains fossil-fuel dependence by displacing the marginal investment toward renewables.
+
+The trap is reinforced in Kazakhstan by three structural factors: (i) abundant domestic gas reserves with low marginal extraction cost; (ii) existing combined-heat-and-power (CHP) plants compatible with gas conversion at modest CapEx; and (iii) sector-level incentive structures that reward fuel-switching equally regardless of remaining lifetime emissions. Breaking the trap requires policy instruments that target the structural effect explicitly --- for example, by tying capacity-payment auctions to lifecycle carbon intensity rather than nameplate efficiency.
+
+\section{Explaining the Electricity Deficit}
+\label{sec:disc_deficit}
+
+The 2023 transition from net exporter to net importer (Section~\ref{sec:eb_breakpoint}) cannot be attributed to a single shock. Three reinforcing drivers operate simultaneously:
+\begin{enumerate}
+    \item \textbf{Demand growth}: domestic electricity consumption rose by approximately 1.8\%/year over 2020--2024, driven by industrial expansion in Pavlodar and Karaganda regions and accelerated electrification of services in Almaty;
+    \item \textbf{Aging fleet}: Kazakhstan's hard-coal fleet has a median commissioning year of approximately 1985, with 39.58\% of installed capacity scheduled for retirement before 2030 (Section~\ref{sec:eb_decommissioning});
+    \item \textbf{Slow renewable additions}: wind grew 7-fold over 2019--2024 to 4.91~TWh, but solar stagnated since 2022 at $\sim$1.87~TWh, far below the policy targets.
+\end{enumerate}
+
+The decommissioning timeline (Figure~\ref{fig:decom_outlook}) reveals that the deficit risk is not transient. Without accelerated replacement, the gap widens through 2030--2035.
+
+\section{Wind--Solar Asymmetry}
+\label{sec:disc_wind_solar}
+
+The capacity-factor analysis (Figures~\ref{fig:cf}, \ref{fig:wind_heatmap}, \ref{fig:res_potential}) reveals a striking asymmetry between wind and solar resources. Wind capacity factor is dominated by mid- and northern oblasts (Akmola, Mangystau, Atyrau, parts of Karaganda), reaching peak monthly mean values of 35--40\% in coastal areas. Solar irradiance, by contrast, peaks in the southern regions (Turkestan, Almaty, Kyzylorda) but with a strong seasonal cycle leading to summer-winter ratios of approximately 2.5.
+
+This spatial-temporal complementarity supports the hypothesis that a combined wind-solar portfolio with appropriate geographic diversity could yield smoother aggregate output than either alone --- which in turn makes net load, the quantity forecast by the transfer-learning model of Chapter~\ref{ch:ml_forecasting}, more predictable.
+
+\section{Role of AI Data Centers in Future Demand}
+\label{sec:disc_aidc_role}
+
+The TCO and TOPSIS analyses (Chapter~\ref{ch:aidc}) demonstrated that Kazakhstan offers a favourable combination of low electricity prices, abundant free-cooling hours, and strategic geographic position between Europe and Asia. However, the analysis also revealed two structural risks: water scarcity in southern regions limits evaporative cooling, and the existing grid carbon intensity (802~gCO\textsubscript{2}/kWh, ~2$\times$ the world average) undermines the appeal for ESG-sensitive operators.
+
+A coordinated policy approach would tie data-center siting to renewable-rich oblasts (Atyrau, Mangystau for wind; Turkestan for solar), packaged with co-located renewable power-purchase agreements. This would simultaneously accelerate renewable deployment (Chapter~\ref{ch:energy_balance} recommendation) and minimize the new demand's emissions footprint.
+
+\section{Limitations of the Study}
+\label{sec:disc_limitations}
+
+Several limitations should be acknowledged:
+\begin{enumerate}
+    \item \textbf{Data verification}: KEGOC values extracted from PDF annual reports were cross-validated against OWID and Ember but residual uncertainty remains in transmission loss figures;
+    \item \textbf{Short and partly synthetic observation window for ML}: the domestic high-frequency record is limited --- a short operational renewable-energy series and a synthetic monthly-to-hourly demand reconstruction --- which motivates the transfer-learning approach of Chapter~\ref{ch:ml_forecasting} but bounds the strength of its conclusions until directly metered hourly data become available;
+    \item \textbf{Demand-side structural change}: potential electrification of road transport, residential heating, and industrial heat are not explicitly modelled and could shift the demand trajectory upward by 2030;
+    \item \textbf{Geopolitical factors}: gas-supply contracts with Russia and Uzbekistan and the impact of sanctions are treated parametrically rather than endogenously.
+\end{enumerate}
+
+\section{Directions for Further Research}
+\label{sec:disc_future}
+
+The framework established by this dissertation can be extended along four axes:
+\begin{enumerate}
+    \item \textbf{Time horizon extension to 2050}: integrating IPCC AR6 climate scenarios~\cite{ipcc2022, rogelj2018} to assess long-term decarbonization trajectories;
+    \item \textbf{Hourly resolution}: extending the analysis from monthly to hourly KOREM data (already 20{,}928 records in the database) to capture intra-day load and renewable variability;
+    \item \textbf{Architectural improvements}: hybridizing LSTM with Transformer attention~\cite{lim2021} or implementing probabilistic forecasts via DeepAR~\cite{salinas2020};
+    \item \textbf{Hydrogen-ammonia integration}: extending the scenario framework to include green-hydrogen production at renewable-rich sites as an export-pathway option for Kazakhstan.
+\end{enumerate}

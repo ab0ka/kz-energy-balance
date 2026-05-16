@@ -1,0 +1,65 @@
+% =====================================================================
+% CHAPTER 1 — INTRODUCTION  (per ДП-AITU-19 §36 — concise, <= 3 pages)
+% =====================================================================
+
+\chapter{INTRODUCTION}
+\label{ch:introduction}
+
+\section{Relevance of the Research}
+\label{sec:relevance}
+
+The energy system of the Republic of Kazakhstan has faced fundamental structural challenges over the past decade. In 2023, for the first time in its post-independence history, the country became a net importer of electricity, indicating profound changes in the balance of supply and demand. In parallel, an intensive transition from coal to gas generation is underway --- the coal share fell from 70.4\% in 2019 to 54.0\% in 2024 --- yet power-sector CO\textsubscript{2} emissions remain on a stable plateau of 90--95~Mt, indicating the limited efficiency of ``decarbonization through substitution''.
+
+Three further factors reinforce the urgency. First, Kazakhstan has ratified the Paris Agreement and adopted the \textit{Strategy for Achieving Carbon Neutrality until 2060}~\cite{moe2023strategy}, targeting a 50\% renewable share by 2050; this gap cannot be evaluated without rigorous baseline diagnostics~\cite{rogelj2018, ipcc2022}. Second, the rapid expansion of artificial intelligence has reframed data centers as a major electricity-demand sector~\cite{masanet2020, iea2024dc, shehabi2024}, for which Kazakhstan is attractive only if its grid-emissions trajectory is credible. Third, wind and solar capacity has grown seven-fold in recent years~\cite{ember2024, irena2024}, raising net-load variability, while open high-frequency demand data remain scarce --- motivating the forecasting and transfer-learning approaches developed here.
+
+\section{Aim and Objectives of the Research}
+\label{sec:goals}
+
+\textbf{Aim of the work:} to develop a comprehensive multi-level statistical and machine learning analysis of the structural drivers of Kazakhstan's emerging electricity deficit and to construct forecasting models for the fuel and energy balance.
+
+\textbf{Research objectives:}
+\begin{enumerate}[topsep=2pt, itemsep=1pt]
+    \item Systematize Kazakhstan's fuel and energy balance data for 2019--2025 from 8 public sources.
+    \item Apply LMDI decomposition to quantify the contributions of demand, fuel structure, and efficiency to CO\textsubscript{2} emission dynamics.
+    \item Identify the structural break in the electricity balance using the formal Bai--Perron test.
+    \item Develop forecasting models for renewable capacity factors (a hybrid SARIMA-LSTM) and for electricity demand (an EU-to-KZ transfer-learning forecaster).
+    \item Conduct a multi-criteria analysis of infrastructure decisions for AI data centers.
+    \item Build a relational database and an interactive Power BI dashboard to ensure full reproducibility.
+\end{enumerate}
+
+\section{Object and Subject of Research}
+\label{sec:object}
+
+\textbf{Object of research:} the processes shaping the fuel and energy balance of the Republic of Kazakhstan over 2019--2025.
+
+\textbf{Subject of research:} the structural relationships between demand, generation, imports/exports, renewable deployment, and CO\textsubscript{2} emissions, together with the statistical and machine learning methods for their quantitative analysis and forecasting. The methodological basis comprises index decomposition (Ang, 2005), Bai--Perron structural-break testing (Bai and Perron, 1998), machine learning for energy forecasting (Hewamalage, 2021), transfer learning (Pan and Yang, 2010), and ERA5-Land reanalysis (Mu\~noz Sabater, 2021).
+
+\section{Scientific Novelty}
+\label{sec:novelty}
+
+\begin{enumerate}[topsep=2pt, itemsep=1pt]
+    \item The ``gas substitution trap'' is quantified for the first time for Kazakhstan: coal-to-gas switching does not reduce power-sector CO\textsubscript{2} emissions, because the structural effect ($-13.8$~Mt) is almost fully offset by demand growth ($+10.2$~Mt).
+    \item The 2023 structural break in the electricity balance is formally established by the Bai--Perron test ($p < 0.01$), showing that the shift from exporter to importer is structural, not transient.
+    \item EU-to-KZ transfer learning is shown, for the first time for Kazakhstan, to significantly improve demand forecasting under open-data scarcity, with a transfer benefit that depends on the base learner.
+    \item A reproducible quantitative baseline of the fuel and energy balance for 2019--2025 is established by integrating 8 open data sources.
+\end{enumerate}
+
+\section{Practical Significance}
+\label{sec:practical}
+
+The results can be applied by the Ministry of Energy for strategy planning, by the grid operators KEGOC and KOREM for operational demand forecasting, by investors for renewable-sector decisions, and by the academic community as a reproducible reference dataset.
+
+\section{Statements Submitted for Defense}
+\label{sec:defended}
+
+\begin{enumerate}[topsep=2pt, itemsep=1pt]
+    \item The concept of the ``gas substitution trap'' as the explanation for the CO\textsubscript{2} emissions plateau under a structural fuel-mix change.
+    \item The 2023 date of the structural break in Kazakhstan's electricity balance, statistically confirmed at $p < 0.01$.
+    \item The hybrid SARIMA-LSTM model, which significantly outperforms classical baselines for short-term renewable capacity-factor forecasting.
+    \item The multi-criteria TOPSIS evaluation of AI data-center siting under Kazakhstan's climatic and grid conditions.
+\end{enumerate}
+
+\section{Structure and Volume of the Work}
+\label{sec:structure}
+
+The dissertation comprises eight chapters (58~pages, 27 figures, 5 tables), 48 references, and three appendices. Chapters~1--3 cover the introduction, literature review, and methodology; Chapters~4--6 present the three component studies --- AI data-center siting, the statistical analysis of the fuel and energy balance, and demand forecasting with EU-to-KZ transfer learning. Chapter~7 discusses the findings and Chapter~8 concludes; the appendices contain the dashboard, database, and summary infographic.

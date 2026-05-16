@@ -1,0 +1,59 @@
+% =====================================================================
+% CHAPTER 8 — CONCLUSIONS
+% =====================================================================
+
+\chapter{CONCLUSIONS}
+\label{ch:conclusions}
+
+\section{Main Results of the Dissertation}
+\label{sec:concl_main}
+
+The dissertation work addresses the scientific and practical task of comprehensive multi-level statistical and machine learning analysis of the fuel and energy balance of the Republic of Kazakhstan. The following main results were obtained:
+
+\begin{enumerate}
+    \item \textbf{A unified database was systematized and integrated} from 8 public sources into a single relational SQLite repository containing 18 tables and over 33{,}000 rows of aggregated and hourly data over 2019--2025.
+
+    \item \textbf{The LMDI decomposition method was applied} to CO\textsubscript{2} emissions in the power sector, revealing the dominant contribution of coal-to-gas substitution ($\Delta C = -13.8$~Mt CO\textsubscript{2}) with a compensating effect of demand growth ($\Delta C = +10.2$~Mt CO\textsubscript{2}). The concept of the \emph{``gas substitution trap''} was formulated.
+
+    \item \textbf{The formal Bai--Perron test} statistically confirmed the structural break in the electricity balance in 2023 (sup~$F = 14.7$, $p < 0.01$), which corresponds to Kazakhstan's transition from net exporter status ($+2.1$~TWh/year) to net importer status ($-2.5$~TWh/year).
+
+    \item \textbf{A hybrid SARIMA-LSTM model was proposed and validated} for forecasting wind capacity factor, providing a 25.2\% MAE reduction over the naive benchmark ($p < 0.001$, Diebold--Mariano test).
+
+    \item \textbf{A multi-criteria TOPSIS analysis was performed} to select the optimal AI data center site in Kazakhstan based on 11 criteria (TCO, PUE, water availability, climate, grid constraints).
+
+    \item \textbf{An interactive Power BI dashboard was developed} with 4 visualization pages, providing stakeholders with a tool for self-service exploration of the energy balance.
+\end{enumerate}
+
+\section{Practical Recommendations}
+\label{sec:concl_recommendations}
+
+Based on the obtained results, the following practical recommendations are formulated:
+
+\begin{enumerate}
+    \item \textbf{To the Ministry of Energy of Kazakhstan:} prioritize RES development through direct mechanisms (auctions, price guarantees), without relying on a natural transition through gas.
+
+    \item \textbf{To the grid operator KEGOC:} integrate hybrid SARIMA-LSTM models into operational balance planning with consideration of developed RES forecasts.
+
+    \item \textbf{To the Ministry of Digital Development:} use multi-criteria analysis to evaluate AI data center placement applications with energy efficiency integration.
+
+    \item \textbf{To investors:} account for the structural deficit risk from 2023+ in long-term planning of industrial projects.
+
+    \item \textbf{To the academic community:} use the published database and code for further research without the need to re-validate sources.
+\end{enumerate}
+
+\section{Achievement of the Aim and Objectives}
+\label{sec:concl_goals}
+
+All objectives formulated in the introduction (Section~\ref{sec:goals}) have been fully addressed. The aim of the dissertation research --- the development of a comprehensive multi-level statistical and machine learning analysis of the structural drivers of Kazakhstan's emerging electricity deficit --- has been achieved. A consolidated visual summary of the main quantitative findings is provided in Appendix~\ref{app:infographic}.
+
+\section{Prospects for Further Research}
+\label{sec:concl_future}
+
+The framework established by this dissertation can be extended along the following directions:
+\begin{enumerate}
+    \item Extending the analysis to the Central Asia region within the unified power system, leveraging the trade-flow data already integrated into the SQLite database;
+    \item Integrating IPCC AR6 climate scenarios~\cite{ipcc2022, rogelj2018} into long-term demand forecasts to assess the robustness of decarbonization pathways under climate variability;
+    \item Developing a digital twin of Kazakhstan's energy system fed by real-time KEGOC and KOREM data, enabling operational what-if analysis;
+    \item Including the hydrogen-ammonia economy and renewable-rich export pathways~\cite{griffiths2021} in the scenario analysis;
+    \item Hybridizing the LSTM forecasting architecture with Transformer attention~\cite{lim2021} or probabilistic outputs (DeepAR~\cite{salinas2020}) for uncertainty-aware planning.
+\end{enumerate}

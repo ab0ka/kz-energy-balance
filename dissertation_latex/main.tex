@@ -1,0 +1,124 @@
+% =====================================================================
+% MASTER'S THESIS
+% Author: Sekenov Gabit (ADA-2404M, Astana IT University)
+% Supervisor: Nurkhat Zhakiyev
+% Topic: Statistical Analysis for the Fuel and Energy Balance of Kazakhstan
+% Defense: Astana, 2026
+%
+% Compilation (command line):
+%   pdflatex main.tex
+%   bibtex main
+%   pdflatex main.tex
+%   pdflatex main.tex
+%
+% Or simply:
+%   compile.bat   (script in this folder)
+% =====================================================================
+
+\documentclass[a4paper,14pt,oneside]{extreport}
+
+% --- Encoding and language -------------------------------------------
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+
+% --- Fonts -----------------------------------------------------------
+\usepackage{times}                  % Times New Roman
+\usepackage{lmodern}
+
+% --- Margins (Astana IT University requirements) ---------------------
+\usepackage[a4paper,
+    left=30mm, right=15mm,
+    top=20mm, bottom=20mm,
+    footskip=10mm]{geometry}
+
+% --- Line spacing 1.5 ------------------------------------------------
+\usepackage{setspace}
+\onehalfspacing
+
+% --- Graphics and tables ---------------------------------------------
+\usepackage{graphicx}
+\graphicspath{{figures/}}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{tabularx}
+
+% --- Math ------------------------------------------------------------
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{mathtools}
+
+% --- Hyperlinks ------------------------------------------------------
+\usepackage[
+    colorlinks=true,
+    linkcolor=black,
+    citecolor=black,
+    urlcolor=blue,
+    pdftitle={Statistical Analysis for the Fuel and Energy Balance of Kazakhstan},
+    pdfauthor={Gabit Sekenov}
+]{hyperref}
+
+% --- Citations (BibTeX) ----------------------------------------------
+\usepackage[numbers,sort&compress]{natbib}
+\bibliographystyle{unsrtnat}
+
+% --- Caption setup ---------------------------------------------------
+\usepackage{caption}
+\captionsetup{font=small, labelfont=bf, format=hang}
+
+% --- Chapter heading style -------------------------------------------
+\usepackage{titlesec}
+\titleformat{\chapter}[block]
+    {\normalfont\Large\bfseries\centering}
+    {\thechapter}{1em}{}
+\titlespacing*{\chapter}{0pt}{-20pt}{20pt}
+
+% --- Utilities -------------------------------------------------------
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{microtype}
+
+% --- Absorb residual overfull lines from long technical terms --------
+\setlength{\emergencystretch}{2em}
+
+% =====================================================================
+\begin{document}
+
+% --- COVER PAGE ------------------------------------------------------
+\input{chapters/00_cover}
+
+% --- TITLE PAGE ------------------------------------------------------
+\input{chapters/00_title_page}
+
+% --- ABSTRACT --------------------------------------------------------
+\input{chapters/00_abstract}
+
+% --- TABLE OF CONTENTS -----------------------------------------------
+\tableofcontents
+\listoffigures
+\listoftables
+
+% --- ABBREVIATIONS ---------------------------------------------------
+\input{chapters/00_abbreviations}
+
+% --- MAIN BODY -------------------------------------------------------
+\input{chapters/01_introduction}
+\input{chapters/02_literature_review}
+\input{chapters/03_methodology}
+\input{chapters/04_chapter_ai_datacenters}
+\input{chapters/05_chapter_energy_balance}
+\input{chapters/06_chapter_ml_forecasting}
+\input{chapters/07_discussion}
+\input{chapters/08_conclusions}
+
+% --- BIBLIOGRAPHY ----------------------------------------------------
+\bibliography{refs}
+
+% --- APPENDICES ------------------------------------------------------
+\appendix
+\input{chapters/09_appendix_dashboard}
+\input{chapters/10_appendix_data}
+\input{chapters/11_appendix_infographic}
+
+\end{document}
